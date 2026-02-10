@@ -132,12 +132,13 @@ button:hover{
   background:var(--panel);
   border:1px solid var(--border);
   border-radius:25px;
-  transition:.3s;
+  transition:.3s ease, transform .2s ease;
 }
 
 .repo:hover{
-  transform:translateY(-6px);
+  transform:translateY(-6px) scale(1.02);
   border-color:var(--accent);
+  box-shadow:0 10px 40px rgba(79,156,255,0.2);
 }
 
 .repo h3{
@@ -177,6 +178,28 @@ footer{
   text-align:center;
   color:var(--muted);
   font-size:14px;
+}
+
+/* List View */
+.grid.list{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+}
+
+.grid.list .repo{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:25px 35px;
+}
+
+.grid.list .repo p{
+  max-width:60%;
+}
+
+.grid.list .repo h3{
+  margin:0;
 }
 </style>
 </head>
@@ -234,8 +257,14 @@ document.getElementById("year").textContent=new Date().getFullYear();
 /* Simple Particle Background */
 const canvas=document.getElementById('bg');
 const ctx=canvas.getContext('2d');
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
+
+function resizeCanvas(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
 
 let particles=[];
 for(let i=0;i<120;i++){
@@ -278,8 +307,16 @@ async function loadRepos(){
   });
 }
 
+let isListView = false;
+
 function toggleView(){
-  document.getElementById("repos").classList.toggle("list");
+  const container = document.getElementById("repos");
+  isListView = !isListView;
+
+  container.classList.toggle("list", isListView);
+
+  const button = event.target;
+  button.textContent = isListView ? "Switch to Grid" : "Switch to List";
 }
 </script>
 
