@@ -9,344 +9,218 @@
 
 <style>
 :root{
-  --bg:#0b0f19;
-  --panel:rgba(255,255,255,0.04);
+  --bg:#0a0f1c;
+  --panel:rgba(255,255,255,0.05);
   --border:rgba(255,255,255,0.08);
+  --accent:#4f9cff;
   --text:#ffffff;
   --muted:#9ca3af;
-  --accent:#4f9cff;
-  --radius:22px;
 }
 
 *{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;}
-
 body{
   font-family:'Inter',sans-serif;
   background:var(--bg);
   color:var(--text);
   overflow-x:hidden;
+  cursor:none;
 }
 
-/* Animated Mesh Background */
-.mesh{
+/* Custom Cursor */
+.cursor{
   position:fixed;
-  inset:0;
-  z-index:-2;
-  background:
-    radial-gradient(at 20% 30%, #1e3a8a 0%, transparent 50%),
-    radial-gradient(at 80% 70%, #2563eb 0%, transparent 50%),
-    radial-gradient(at 50% 100%, #0ea5e9 0%, transparent 60%);
-  animation:move 18s ease-in-out infinite alternate;
-}
-
-@keyframes move{
-  from{filter:hue-rotate(0deg);}
-  to{filter:hue-rotate(30deg);}
-}
-
-/* subtle noise */
-body::after{
-  content:"";
-  position:fixed;
-  inset:0;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.8'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  width:18px;height:18px;
+  border-radius:50%;
+  background:var(--accent);
   pointer-events:none;
-  z-index:-1;
+  mix-blend-mode:difference;
+  transition:transform .1s ease;
+  z-index:9999;
 }
 
 /* Layout */
 .container{
   width:min(1200px,calc(100% - 40px));
   margin:auto;
-  padding:50px 0;
+  padding:60px 0;
 }
-
-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:120px;
-}
-
-.logo{
-  font-weight:800;
-  letter-spacing:1px;
-  font-size:22px;
-}
-
-nav a{
-  margin-left:30px;
-  text-decoration:none;
-  color:var(--muted);
-  font-size:14px;
-}
-
-nav a:hover{color:var(--accent);}
 
 /* Hero */
 .hero{
   text-align:center;
-  margin-bottom:140px;
+  margin-bottom:160px;
 }
-
 .hero h1{
-  font-size:68px;
+  font-size:70px;
   font-weight:800;
-  line-height:1.1;
-  margin-bottom:25px;
-  background:linear-gradient(90deg,#fff,#9ca3af);
+  background:linear-gradient(90deg,#fff,#6ea8ff);
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
 }
-
 .hero p{
-  max-width:700px;
-  margin:auto;
+  margin-top:25px;
   font-size:20px;
   color:var(--muted);
 }
 
-/* Stats */
-.stats{
-  display:flex;
-  justify-content:center;
-  gap:60px;
-  margin-top:60px;
+/* Skill Orbit */
+.orbit{
+  position:relative;
+  margin:140px auto;
+  width:420px;height:420px;
 }
-
-.stat{
+.center{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  font-weight:600;
   text-align:center;
 }
-
-.stat h2{
-  font-size:36px;
-  font-weight:700;
+.skill-node{
+  position:absolute;
+  top:50%;left:50%;
+  transform-origin:-150px;
+  font-size:14px;
+  color:var(--accent);
+  animation:rotate 18s linear infinite;
 }
 
-.stat span{
-  font-size:14px;
-  color:var(--muted);
+@keyframes rotate{
+  from{transform:rotate(0deg);}
+  to{transform:rotate(360deg);}
 }
 
 /* Projects */
 .section{
-  margin-top:120px;
+  margin-top:160px;
 }
-
 .section h2{
-  font-size:28px;
-  margin-bottom:40px;
+  font-size:30px;
+  margin-bottom:50px;
 }
 
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-  gap:30px;
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+  gap:40px;
 }
 
 .card{
-  position:relative;
-  padding:30px;
-  border-radius:var(--radius);
+  padding:40px;
+  border-radius:24px;
   background:var(--panel);
   border:1px solid var(--border);
-  backdrop-filter:blur(20px);
   transition:.3s ease;
-  cursor:pointer;
-  overflow:hidden;
+  transform-style:preserve-3d;
 }
-
 .card:hover{
-  transform:translateY(-6px);
   border-color:var(--accent);
+  transform:rotateX(6deg) rotateY(-6deg);
 }
-
 .card h3{
-  margin-bottom:15px;
+  margin-bottom:20px;
 }
-
 .card p{
   color:var(--muted);
-  font-size:14px;
 }
 
-/* Spotlight effect */
-.card::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:radial-gradient(circle at var(--x) var(--y),
-    rgba(79,156,255,0.25),
-    transparent 40%);
-  opacity:0;
-  transition:.2s;
+/* GitHub Command Button */
+.command{
+  margin-top:160px;
+  text-align:center;
 }
-
-.card:hover::before{
-  opacity:1;
-}
-
-/* Modal */
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.6);
-  backdrop-filter:blur(10px);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  opacity:0;
-  pointer-events:none;
+.command button{
+  padding:18px 40px;
+  background:transparent;
+  border:1px solid var(--border);
+  border-radius:40px;
+  color:var(--text);
+  font-size:16px;
   transition:.3s;
 }
-
-.modal.active{
-  opacity:1;
-  pointer-events:all;
-}
-
-.modal-content{
-  background:#111827;
-  padding:50px;
-  border-radius:30px;
-  max-width:700px;
-  width:90%;
-  border:1px solid var(--border);
-}
-
-.close{
-  text-align:right;
-  cursor:pointer;
-  color:var(--muted);
+.command button:hover{
+  border-color:var(--accent);
+  box-shadow:0 0 40px rgba(79,156,255,0.3);
 }
 
 footer{
-  margin-top:160px;
-  padding:60px 0;
+  margin-top:200px;
   text-align:center;
   color:var(--muted);
-}
-
-/* Responsive */
-@media(max-width:800px){
-  .hero h1{font-size:42px;}
-  .stats{flex-direction:column;gap:30px;}
+  font-size:14px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="mesh"></div>
+<div class="cursor"></div>
 
 <div class="container">
 
-<header>
-  <div class="logo">Chaosnico9000</div>
-  <nav>
-    <a href="#projects">Projekte</a>
-    <a href="https://github.com/Chaosnico9000" target="_blank">GitHub ↗</a>
-  </nav>
-</header>
-
 <section class="hero">
-  <h1>Engineering.<br>Ästhetik.<br>Performance.</h1>
+  <h1>Architecting Digital Systems.</h1>
   <p>
-    Ich entwickle hochwertige .NET Anwendungen mit Fokus auf Architektur,
-    Skalierbarkeit und visueller Präzision.
+    High-performance .NET Engineering · Monitoring · Automation · Precision UI
   </p>
+</section>
 
-  <div class="stats">
-    <div class="stat">
-      <h2 class="counter" data-target="12">0</h2>
-      <span>Projekte</span>
+<section class="orbit">
+  <div class="center">Skill Stack</div>
+  <div class="skill-node" style="animation-delay:0s;">.NET</div>
+  <div class="skill-node" style="animation-delay:-3s;">Blazor</div>
+  <div class="skill-node" style="animation-delay:-6s;">WPF</div>
+  <div class="skill-node" style="animation-delay:-9s;">SQL</div>
+  <div class="skill-node" style="animation-delay:-12s;">CI/CD</div>
+  <div class="skill-node" style="animation-delay:-15s;">Serilog</div>
+</section>
+
+<section class="section">
+  <h2>Selected Projects</h2>
+  <div class="grid">
+
+    <div class="card">
+      <h3>BizMMonitoring</h3>
+      <p>Enterprise Monitoring System mit BackgroundServices,
+      Architektur-Fokus und produktiver Infrastruktur.</p>
     </div>
-    <div class="stat">
-      <h2 class="counter" data-target="6">0</h2>
-      <span>Produktive Systeme</span>
+
+    <div class="card">
+      <h3>AZUBITOOLS</h3>
+      <p>PDF Lifecycle Management mit Versionierung,
+      strukturierter Datenhaltung und Web UI.</p>
     </div>
-    <div class="stat">
-      <h2 class="counter" data-target="4">0</h2>
-      <span>Jahre Erfahrung</span>
+
+    <div class="card">
+      <h3>PluginTester</h3>
+      <p>Dynamic Plugin Runtime mit Hot Reload,
+      Kompilierungs-Engine und CLI Interface.</p>
     </div>
+
   </div>
 </section>
 
-<section class="section" id="projects">
-  <h2>Projekte</h2>
-  <div class="grid">
-
-    <div class="card" onclick="openModal('BizMMonitoring')">
-      <h3>BizMMonitoring</h3>
-      <p>Monitoring-Plattform für BizTalk mit Services und Dashboard.</p>
-    </div>
-
-    <div class="card" onclick="openModal('AZUBITOOLS')">
-      <h3>AZUBITOOLS</h3>
-      <p>Strukturierte PDF-Berichtsverwaltung mit Versionierung.</p>
-    </div>
-
-    <div class="card" onclick="openModal('PluginTester')">
-      <h3>PluginTester</h3>
-      <p>CLI-System für dynamische Plugin-Kompilierung und Ausführung.</p>
-    </div>
-
-  </div>
+<section class="command">
+  <button onclick="window.open('https://github.com/Chaosnico9000','_blank')">
+    Open GitHub Repository ↗
+  </button>
 </section>
 
 <footer>
-© <span id="year"></span> Chaosnico9000
+© <span id="year"></span> Chaosnico9000 · Precision Engineering
 </footer>
 
-</div>
-
-<!-- Modal -->
-<div class="modal" id="modal">
-  <div class="modal-content">
-    <div class="close" onclick="closeModal()">✕</div>
-    <h2 id="modalTitle"></h2>
-    <p style="margin-top:20px;color:#9ca3af">
-      Detailbeschreibung des Projekts. Architektur, Technologien,
-      besondere Features und Herausforderungen.
-    </p>
-  </div>
 </div>
 
 <script>
 document.getElementById("year").textContent=new Date().getFullYear();
 
-/* Counter Animation */
-document.querySelectorAll(".counter").forEach(counter=>{
-  let update=()=>{
-    let target=+counter.dataset.target;
-    let count=+counter.innerText;
-    let inc=target/60;
-    if(count<target){
-      counter.innerText=Math.ceil(count+inc);
-      setTimeout(update,20);
-    }else counter.innerText=target;
-  }
-  update();
+/* Custom Cursor */
+const cursor=document.querySelector('.cursor');
+document.addEventListener('mousemove',e=>{
+  cursor.style.left=e.clientX+'px';
+  cursor.style.top=e.clientY+'px';
 });
-
-/* Spotlight mouse tracking */
-document.querySelectorAll(".card").forEach(card=>{
-  card.addEventListener("mousemove",e=>{
-    const rect=card.getBoundingClientRect();
-    card.style.setProperty("--x",(e.clientX-rect.left)+"px");
-    card.style.setProperty("--y",(e.clientY-rect.top)+"px");
-  });
-});
-
-/* Modal */
-function openModal(title){
-  document.getElementById("modalTitle").innerText=title;
-  document.getElementById("modal").classList.add("active");
-}
-function closeModal(){
-  document.getElementById("modal").classList.remove("active");
-}
 </script>
 
 </body>
