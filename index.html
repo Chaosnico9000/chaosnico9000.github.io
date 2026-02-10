@@ -1,1795 +1,287 @@
-<!--
-  Chaosnico9000.github.io — Single-File Portfolio (WOW, aber clean)
-  Features (wie gewünscht, weil Menschen gern eskalieren):
-  ✅ Echter WebGL/3D Background (Three.js, dezent & performant)
-  ✅ GitHub API Live: Repos automatisch laden + sortieren + filtern
-  ✅ Animierter Skill Radar Chart (Canvas, smooth)
-  ✅ Interaktives Projekt-Dashboard mit Tabs + Search + Language Filter
-  ✅ Apple x Stripe Hybrid Look (minimal, premium, viel Luft, subtiler Glow)
-  ✅ Projekt-Modal (Details, Stats, Links) ohne „Social Link Wall“
-  
-  Setup:
-  - Als index.html ins Repo-Root: Chaosnico9000/Chaosnico9000.github.io
-  - GitHub Pages: Settings → Pages → Deploy from branch → main / root
--->
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Chaosnico9000 – Portfolio. .NET Engineering, Monitoring, Automation, UI." />
-  <meta name="theme-color" content="#0b1020" />
-  <title>Chaosnico9000 | Portfolio</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chaosnico9000 | Engineering Portfolio</title>
 
-  <!-- Premium-ish typography -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
-  <style>
-    :root{
-      --bg: #070a12;
-      --panel: rgba(255,255,255,.055);
-      --panel2: rgba(255,255,255,.075);
-      --line: rgba(255,255,255,.10);
-      --text: rgba(255,255,255,.90);
-      --muted: rgba(255,255,255,.62);
-      --faint: rgba(255,255,255,.40);
-      --accent: #4f9cff;
-      --accent2:#23c4f8;
-      --ok:#33d6a6;
-      --warn:#ffcf5c;
-      --danger:#ff5c7a;
+<style>
+:root{
+  --bg:#05070f;
+  --panel:rgba(255,255,255,0.04);
+  --border:rgba(255,255,255,0.08);
+  --text:#ffffff;
+  --muted:#7c8599;
+  --accent:#4f9cff;
+}
 
-      --radius: 22px;
-      --radius2: 28px;
-      --shadow: 0 24px 70px rgba(0,0,0,.58);
-      --shadow2: 0 18px 55px rgba(0,0,0,.42);
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  overflow-x:hidden;
+}
 
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
-      --sans: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-    }
+/* Background Canvas */
+#bg{
+  position:fixed;
+  inset:0;
+  z-index:-1;
+}
 
-    *{ box-sizing:border-box; }
-    html, body{ height:100%; }
-    body{
-      margin:0;
-      font-family: var(--sans);
-      color: var(--text);
-      background: radial-gradient(1200px 700px at 10% 0%, rgba(79,156,255,.20), transparent 60%),
-                  radial-gradient(900px 700px at 90% 10%, rgba(35,196,248,.16), transparent 55%),
-                  radial-gradient(900px 650px at 60% 120%, rgba(51,214,166,.10), transparent 55%),
-                  var(--bg);
-      overflow-x:hidden;
-    }
+/* Layout */
+.container{
+  width:min(1200px,calc(100% - 40px));
+  margin:auto;
+  padding:80px 0;
+}
 
-    /* WebGL background canvas container */
-    #bg3d{
-      position:fixed;
-      inset:0;
-      z-index:-5;
-      pointer-events:none;
-      opacity:.92;
-    }
+/* Hero */
+.hero{
+  min-height:80vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
 
-    /* subtle noise overlay */
-    body::before{
-      content:"";
-      position:fixed;
-      inset:0;
-      z-index:-4;
-      pointer-events:none;
-      opacity:.04;
-      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    }
+.hero h1{
+  font-size:70px;
+  font-weight:800;
+  line-height:1.05;
+}
 
-    /* layout */
-    .wrap{
-      width:min(1180px, calc(100% - 44px));
-      margin:0 auto;
-      padding: 22px 0 76px;
-    }
+.hero p{
+  margin-top:25px;
+  font-size:20px;
+  color:var(--muted);
+  max-width:650px;
+}
 
-    /* Top bar */
-    .topbar{
-      position:sticky;
-      top:0;
-      z-index:50;
-      backdrop-filter: blur(14px);
-      background: linear-gradient(180deg, rgba(7,10,18,.82), rgba(7,10,18,.22));
-      border-bottom:1px solid var(--line);
-    }
-    .topbar .inner{
-      width:min(1180px, calc(100% - 44px));
-      margin:0 auto;
-      padding:14px 0;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px;
-    }
+/* Sections */
+.section{
+  margin-top:200px;
+}
 
-    .brand{
-      display:flex;
-      gap:12px;
-      align-items:center;
-      min-width: 260px;
-    }
-    .mark{
-      width:38px;height:38px;
-      border-radius:14px;
-      background:
-        radial-gradient(12px 12px at 30% 28%, rgba(255,255,255,.95), transparent 55%),
-        linear-gradient(135deg, rgba(79,156,255,1), rgba(35,196,248,1));
-      box-shadow: 0 0 0 1px rgba(255,255,255,.12), 0 16px 42px rgba(79,156,255,.22);
-    }
-    .brand .t1{
-      font-weight:800;
-      letter-spacing:-.2px;
-      line-height:1.1;
-    }
-    .brand .t2{
-      font-family:var(--mono);
-      color:var(--muted);
-      font-size:12px;
-      margin-top:2px;
-    }
+.section h2{
+  font-size:32px;
+  margin-bottom:40px;
+}
 
-    .nav{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-      align-items:center;
-    }
-    .chip{
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      padding:9px 12px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      color: var(--muted);
-      text-decoration:none;
-      transition: transform .12s ease, background .12s ease, border-color .12s ease;
-      font-size:13px;
-      user-select:none;
-    }
-    .chip:hover{
-      transform: translateY(-1px);
-      background: rgba(255,255,255,.08);
-      border-color: rgba(255,255,255,.18);
-      text-decoration:none;
-      color: rgba(255,255,255,.78);
-    }
-    .chip.primary{
-      color: rgba(255,255,255,.88);
-      border-color: rgba(79,156,255,.28);
-      background: linear-gradient(135deg, rgba(79,156,255,.20), rgba(35,196,248,.10));
-    }
+/* Skill Matrix */
+.matrix{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:20px;
+  perspective:800px;
+}
 
-    /* hero */
-    .hero{
-      padding: 64px 0 36px;
-      display:grid;
-      grid-template-columns: 1.2fr .8fr;
-      gap:18px;
-      align-items:stretch;
-    }
-    @media (max-width: 920px){
-      .hero{ grid-template-columns: 1fr; }
-      .brand{ min-width: unset; }
-    }
+.skill-card{
+  padding:30px;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:20px;
+  text-align:center;
+  transition:.4s ease;
+  transform-style:preserve-3d;
+}
 
-    .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.045));
-      border:1px solid rgba(255,255,255,.11);
-      border-radius: var(--radius2);
-      box-shadow: var(--shadow);
-      position:relative;
-      overflow:hidden;
-    }
-    .card::after{
-      content:"";
-      position:absolute;
-      inset:-180px -180px auto auto;
-      width:420px;height:420px;
-      background: radial-gradient(circle at 30% 30%, rgba(79,156,255,.28), transparent 60%),
-                  radial-gradient(circle at 70% 70%, rgba(35,196,248,.18), transparent 65%);
-      filter: blur(8px);
-      pointer-events:none;
-      opacity:.85;
-    }
-    .pad{ padding: 22px; position:relative; z-index:1; }
+.skill-card:hover{
+  transform:rotateY(10deg) rotateX(5deg);
+  border-color:var(--accent);
+}
 
-    h1{
-      margin:0 0 12px;
-      font-size: clamp(32px, 4.4vw, 54px);
-      line-height:1.02;
-      letter-spacing:-.9px;
-    }
-    .sub{
-      margin:0;
-      color:var(--muted);
-      font-size:15px;
-      line-height:1.55;
-      max-width: 70ch;
-    }
+.skill-card span{
+  font-size:14px;
+  color:var(--muted);
+}
 
-    .heroActions{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:16px;
-      align-items:center;
-    }
-    .btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      padding: 10px 14px;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
-      color: rgba(255,255,255,.86);
-      text-decoration:none;
-      font-size:13px;
-      transition: transform .12s ease, background .12s ease, border-color .12s ease, box-shadow .12s ease;
-      user-select:none;
-      cursor:pointer;
-    }
-    .btn:hover{
-      transform: translateY(-1px);
-      background: rgba(255,255,255,.10);
-      border-color: rgba(255,255,255,.22);
-      text-decoration:none;
-    }
-    .btn.accent{
-      border-color: rgba(79,156,255,.40);
-      background: linear-gradient(135deg, rgba(79,156,255,.26), rgba(35,196,248,.10));
-    }
-    .kbd{
-      font-family: var(--mono);
-      font-size: 12px;
-      padding: 2px 8px;
-      border-radius: 10px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.25);
-      color: rgba(255,255,255,.74);
-    }
+/* Dashboard */
+.dashboard-controls{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:30px;
+  flex-wrap:wrap;
+  gap:20px;
+}
 
-    /* right hero: radar + stats */
-    .side{
-      display:grid;
-      grid-template-rows: auto auto;
-      gap:14px;
-    }
-    .mini{
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.035));
-      border: 1px solid rgba(255,255,255,.11);
-      border-radius: var(--radius2);
-      box-shadow: var(--shadow2);
-      overflow:hidden;
-      position:relative;
-    }
-    .mini .head{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:12px;
-      padding:16px 16px 8px;
-    }
-    .mini .head strong{
-      font-size:13px;
-      letter-spacing:.2px;
-    }
-    .mini .head span{
-      color:var(--muted);
-      font-family:var(--mono);
-      font-size:11px;
-      text-transform:uppercase;
-      letter-spacing:.6px;
-    }
+button{
+  padding:12px 25px;
+  background:transparent;
+  border:1px solid var(--border);
+  border-radius:40px;
+  color:var(--text);
+  cursor:pointer;
+  transition:.3s;
+}
 
-    .statsRow{
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap:10px;
-      padding: 0 16px 16px;
-    }
-    .stat{
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      border-radius: 18px;
-      padding: 12px 12px 10px;
-    }
-    .stat .n{
-      font-size:20px;
-      font-weight:800;
-      letter-spacing:-.3px;
-    }
-    .stat .l{
-      color:var(--muted);
-      font-size:12px;
-      margin-top:2px;
-    }
+button:hover{
+  border-color:var(--accent);
+}
 
-    /* sections */
-    .section{
-      margin-top: 22px;
-    }
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:30px;
+}
 
-    .grid{
-      display:grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap:14px;
-      margin-top: 14px;
-    }
-    .col-8{ grid-column: span 8; }
-    .col-4{ grid-column: span 4; }
-    .col-12{ grid-column: span 12; }
-    @media (max-width: 980px){
-      .col-8, .col-4{ grid-column: span 12; }
-    }
+.repo{
+  padding:30px;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:25px;
+  transition:.3s;
+}
 
-    h2{
-      margin:0 0 10px;
-      font-size:18px;
-      letter-spacing:-.2px;
-    }
-    .muted{ color: var(--muted); }
+.repo:hover{
+  transform:translateY(-6px);
+  border-color:var(--accent);
+}
 
-    /* Dashboard controls */
-    .dash{
-      background: linear-gradient(180deg, rgba(255,255,255,.065), rgba(255,255,255,.035));
-      border:1px solid rgba(255,255,255,.11);
-      border-radius: var(--radius2);
-      box-shadow: var(--shadow2);
-      overflow:hidden;
-      position:relative;
-    }
-    .dashTop{
-      display:flex;
-      gap:12px;
-      align-items:center;
-      justify-content:space-between;
-      padding: 16px;
-      border-bottom:1px solid rgba(255,255,255,.10);
-      flex-wrap:wrap;
-    }
-    .tabs{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
-    .tab{
-      padding:8px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      color: var(--muted);
-      font-size:13px;
-      cursor:pointer;
-      user-select:none;
-      transition: background .12s ease, border-color .12s ease, transform .12s ease;
-    }
-    .tab:hover{
-      transform: translateY(-1px);
-      background: rgba(255,255,255,.08);
-      border-color: rgba(255,255,255,.18);
-      color: rgba(255,255,255,.78);
-    }
-    .tab.active{
-      color: rgba(255,255,255,.88);
-      border-color: rgba(79,156,255,.34);
-      background: linear-gradient(135deg, rgba(79,156,255,.20), rgba(35,196,248,.08));
-    }
+.repo h3{
+  margin-bottom:10px;
+}
 
-    .controls{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-      justify-content:flex-end;
-      flex:1;
-      min-width: 260px;
-    }
-    .search{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      padding: 10px 12px;
-      border-radius: 16px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.22);
-      min-width: 260px;
-      flex: 1;
-    }
-    .search input{
-      width:100%;
-      border:0;
-      outline:none;
-      background:transparent;
-      color: rgba(255,255,255,.88);
-      font-size:13px;
-      font-family: var(--sans);
-    }
-    .pillrow{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      align-items:center;
-      padding: 12px 16px 16px;
-    }
-    .pill{
-      padding:7px 10px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      color: var(--muted);
-      font-size:12px;
-      font-family: var(--mono);
-      cursor:pointer;
-      user-select:none;
-      transition: transform .12s ease, background .12s ease, border-color .12s ease;
-    }
-    .pill:hover{
-      transform: translateY(-1px);
-      background: rgba(255,255,255,.08);
-      border-color: rgba(255,255,255,.18);
-      color: rgba(255,255,255,.74);
-    }
-    .pill.active{
-      color: rgba(255,255,255,.88);
-      border-color: rgba(79,156,255,.34);
-      background: rgba(79,156,255,.16);
-    }
+.repo p{
+  color:var(--muted);
+  font-size:14px;
+}
 
-    /* Repo cards grid */
-    .repoGrid{
-      display:grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 14px;
-      padding: 0 16px 16px;
-    }
-    @media (max-width: 860px){
-      .repoGrid{ grid-template-columns: 1fr; }
-    }
+/* Floating Command */
+.command-btn{
+  position:fixed;
+  bottom:40px;
+  right:40px;
+  width:70px;
+  height:70px;
+  border-radius:50%;
+  background:var(--accent);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:0 0 40px rgba(79,156,255,0.4);
+  transition:.3s;
+}
 
-    .repo{
-      position:relative;
-      border-radius: 22px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      padding: 16px;
-      overflow:hidden;
-      cursor:pointer;
-      transition: transform .14s ease, border-color .14s ease, background .14s ease;
-    }
-    .repo::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background: radial-gradient(circle at var(--mx, 20%) var(--my, 30%), rgba(79,156,255,.18), transparent 55%);
-      opacity:0;
-      transition: opacity .14s ease;
-      pointer-events:none;
-    }
-    .repo:hover{
-      transform: translateY(-2px);
-      border-color: rgba(79,156,255,.30);
-      background: rgba(255,255,255,.065);
-    }
-    .repo:hover::before{ opacity:1; }
+.command-btn:hover{
+  transform:scale(1.1);
+}
 
-    .repoTop{
-      display:flex;
-      gap:10px;
-      align-items:flex-start;
-      justify-content:space-between;
-    }
-    .repoTitle{
-      font-weight:800;
-      letter-spacing:-.2px;
-      display:flex;
-      gap:10px;
-      align-items:center;
-    }
-    .repoTitle .dot{
-      width:8px;height:8px;border-radius:999px;
-      background: linear-gradient(135deg, rgba(79,156,255,1), rgba(35,196,248,1));
-      box-shadow: 0 0 0 3px rgba(79,156,255,.12);
-      flex:0 0 auto;
-    }
-    .repoMeta{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-    }
-    .badge{
-      font-family: var(--mono);
-      font-size: 11px;
-      padding: 5px 9px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.20);
-      color: rgba(255,255,255,.68);
-      white-space:nowrap;
-    }
-    .badge.ok{ border-color: rgba(51,214,166,.28); background: rgba(51,214,166,.08); }
-    .badge.warn{ border-color: rgba(255,207,92,.26); background: rgba(255,207,92,.08); }
-
-    .repoDesc{
-      margin: 10px 0 0;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.5;
-      min-height: 38px;
-    }
-
-    .repoBottom{
-      display:flex;
-      gap:12px;
-      align-items:center;
-      justify-content:space-between;
-      margin-top: 12px;
-      color: rgba(255,255,255,.68);
-      font-size: 12px;
-      font-family: var(--mono);
-    }
-
-    /* Skill stack card */
-    .stackCard{
-      background: linear-gradient(180deg, rgba(255,255,255,.065), rgba(255,255,255,.035));
-      border:1px solid rgba(255,255,255,.11);
-      border-radius: var(--radius2);
-      box-shadow: var(--shadow2);
-      overflow:hidden;
-      position:relative;
-    }
-
-    .stackInner{
-      padding: 16px;
-    }
-    .stackHeader{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      align-items:flex-start;
-      margin-bottom: 10px;
-    }
-    .stackHeader strong{ font-size:13px; }
-    .stackHeader span{
-      color:var(--muted);
-      font-family:var(--mono);
-      font-size:11px;
-      text-transform:uppercase;
-      letter-spacing:.6px;
-    }
-
-    /* Orbit */
-    .orbit{
-      position:relative;
-      height: 260px;
-      border-radius: 22px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.20);
-      overflow:hidden;
-    }
-    .orbit::after{
-      content:"";
-      position:absolute;
-      inset:-120px -120px auto auto;
-      width:280px;height:280px;
-      background: radial-gradient(circle at 40% 40%, rgba(35,196,248,.18), transparent 65%);
-      filter: blur(10px);
-      pointer-events:none;
-      opacity:.8;
-    }
-    .orbitCenter{
-      position:absolute;
-      left:50%; top:50%;
-      transform: translate(-50%, -50%);
-      text-align:center;
-      font-weight:800;
-      letter-spacing:-.2px;
-      line-height:1.2;
-      color: rgba(255,255,255,.86);
-    }
-    .orbitCenter small{
-      display:block;
-      font-weight:600;
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--muted);
-      letter-spacing:.7px;
-      text-transform:uppercase;
-      margin-top:6px;
-    }
-    .node{
-      position:absolute;
-      left:50%; top:50%;
-      transform-origin: -110px 0;
-      padding:7px 10px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
-      color: rgba(255,255,255,.74);
-      font-size:12px;
-      font-family: var(--mono);
-      user-select:none;
-      box-shadow: 0 12px 30px rgba(0,0,0,.22);
-      backdrop-filter: blur(10px);
-      will-change: transform;
-      animation: spin 18s linear infinite;
-    }
-    .node strong{
-      color: rgba(255,255,255,.88);
-      font-weight:700;
-      margin-right:6px;
-    }
-    @keyframes spin{
-      from{ transform: rotate(0deg) translateX(110px); }
-      to{ transform: rotate(360deg) translateX(110px); }
-    }
-
-    /* modal */
-    .modal{
-      position:fixed;
-      inset:0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding: 18px;
-      background: rgba(0,0,0,.55);
-      backdrop-filter: blur(14px);
-      opacity:0;
-      pointer-events:none;
-      transition: opacity .18s ease;
-      z-index: 200;
-    }
-    .modal.active{ opacity:1; pointer-events:auto; }
-    .modalBox{
-      width:min(820px, 100%);
-      border-radius: 30px;
-      border:1px solid rgba(255,255,255,.12);
-      background: linear-gradient(180deg, rgba(17,24,39,.92), rgba(17,24,39,.72));
-      box-shadow: 0 34px 100px rgba(0,0,0,.70);
-      overflow:hidden;
-      transform: translateY(10px) scale(.985);
-      transition: transform .18s ease;
-    }
-    .modal.active .modalBox{ transform: translateY(0) scale(1); }
-    .modalHead{
-      padding: 16px 18px;
-      border-bottom:1px solid rgba(255,255,255,.10);
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:12px;
-    }
-    .modalTitle{
-      font-weight:900;
-      letter-spacing:-.3px;
-      font-size: 16px;
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
-    .modalTitle .dot{
-      width:10px;height:10px;border-radius:999px;
-      background: linear-gradient(135deg, rgba(79,156,255,1), rgba(35,196,248,1));
-      box-shadow: 0 0 0 4px rgba(79,156,255,.12);
-    }
-    .modalClose{
-      cursor:pointer;
-      padding:8px 10px;
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      color: rgba(255,255,255,.72);
-      user-select:none;
-      transition: transform .12s ease, background .12s ease;
-      font-family: var(--mono);
-      font-size: 12px;
-    }
-    .modalClose:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); }
-    .modalBody{
-      padding: 16px 18px 18px;
-      display:grid;
-      grid-template-columns: 1.4fr .6fr;
-      gap:14px;
-    }
-    @media (max-width: 860px){
-      .modalBody{ grid-template-columns: 1fr; }
-    }
-    .modalDesc{
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.55;
-      margin: 10px 0 0;
-    }
-    .kv{
-      display:grid;
-      gap:10px;
-    }
-    .kvItem{
-      border-radius: 18px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      padding: 12px;
-    }
-    .kvItem b{
-      display:block;
-      font-size: 12px;
-      color: rgba(255,255,255,.78);
-      margin-bottom: 4px;
-    }
-    .kvItem span{
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 12px;
-    }
-    .modalActions{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top: 12px;
-    }
-
-    /* command palette (special GitHub entry point, not a social link wall) */
-    .palette{
-      position:fixed;
-      inset:0;
-      display:flex;
-      align-items:flex-start;
-      justify-content:center;
-      padding: 80px 18px 18px;
-      background: rgba(0,0,0,.55);
-      backdrop-filter: blur(12px);
-      opacity:0;
-      pointer-events:none;
-      transition: opacity .16s ease;
-      z-index: 220;
-    }
-    .palette.active{ opacity:1; pointer-events:auto; }
-    .paletteBox{
-      width:min(820px, 100%);
-      border-radius: 28px;
-      border:1px solid rgba(255,255,255,.12);
-      background: linear-gradient(180deg, rgba(17,24,39,.92), rgba(17,24,39,.72));
-      box-shadow: 0 34px 100px rgba(0,0,0,.70);
-      overflow:hidden;
-      transform: translateY(10px) scale(.985);
-      transition: transform .16s ease;
-    }
-    .palette.active .paletteBox{ transform: translateY(0) scale(1); }
-    .paletteTop{
-      padding: 14px 16px;
-      border-bottom:1px solid rgba(255,255,255,.10);
-      display:flex;
-      gap:10px;
-      align-items:center;
-    }
-    .paletteTop input{
-      width:100%;
-      border:0;
-      outline:none;
-      background: transparent;
-      color: rgba(255,255,255,.88);
-      font-size: 14px;
-      font-family: var(--sans);
-    }
-    .paletteHint{
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--muted);
-      padding: 10px 16px 0;
-    }
-    .paletteList{
-      max-height: 360px;
-      overflow:auto;
-      padding: 10px;
-    }
-    .cmd{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      padding: 12px 12px;
-      border-radius: 18px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      cursor:pointer;
-      margin-bottom: 10px;
-      transition: transform .12s ease, background .12s ease, border-color .12s ease;
-    }
-    .cmd:hover{
-      transform: translateY(-1px);
-      background: rgba(255,255,255,.08);
-      border-color: rgba(79,156,255,.28);
-    }
-    .cmd .left{
-      display:flex;
-      flex-direction:column;
-      gap:3px;
-    }
-    .cmd b{ font-size: 13px; letter-spacing:-.1px; }
-    .cmd small{
-      color: var(--muted);
-      font-size: 12px;
-      font-family: var(--mono);
-    }
-
-    /* reveal */
-    .reveal{
-      opacity:0;
-      transform: translateY(16px);
-      transition: opacity .45s ease, transform .45s ease;
-    }
-    .reveal.in{
-      opacity:1;
-      transform: translateY(0);
-    }
-
-    footer{
-      margin-top: 18px;
-      padding-top: 16px;
-      border-top:1px solid rgba(255,255,255,.10);
-      color: var(--muted);
-      font-size: 13px;
-      display:flex;
-      gap:10px;
-      justify-content:space-between;
-      flex-wrap:wrap;
-    }
-  </style>
+/* Footer */
+footer{
+  margin-top:200px;
+  text-align:center;
+  color:var(--muted);
+  font-size:14px;
+}
+</style>
 </head>
 
 <body>
-  <div id="bg3d"></div>
 
-  <header class="topbar">
-    <div class="inner">
-      <div class="brand">
-        <div class="mark" aria-hidden="true"></div>
-        <div>
-          <div class="t1">Chaosnico9000</div>
-          <div class="t2">portfolio // engineering</div>
-        </div>
-      </div>
+<canvas id="bg"></canvas>
 
-      <nav class="nav" aria-label="Navigation">
-        <a class="chip" href="#stack">Skill Stack</a>
-        <a class="chip" href="#projects">Projects</a>
-        <button class="chip primary" id="openPaletteBtn" type="button" title="GitHub, aber mit Stil">
-          GitHub Portal <span class="kbd">Ctrl</span><span class="kbd">K</span>
-        </button>
-      </nav>
-    </div>
-  </header>
+<div class="container">
 
-  <main class="wrap">
-    <section class="hero">
-      <article class="card reveal">
-        <div class="pad">
-          <h1>Systems that hold.<br><span style="color:rgba(255,255,255,.74)">Interfaces that feel.</span></h1>
-          <p class="sub">
-            .NET Engineering · Monitoring · Automation · UI Architecture.
-            Ich baue Software, die nicht nach zwei Wochen „historisch gewachsen“ schreit.
-          </p>
+<section class="hero">
+  <h1>Engineering Digital Systems.</h1>
+  <p>
+    Performance-first .NET development,
+    scalable architectures,
+    and interfaces built with precision.
+  </p>
+</section>
 
-          <div class="heroActions">
-            <a class="btn accent" href="#projects">Projekt-Dashboard</a>
-            <a class="btn" href="#stack">Skill Radar & Stack</a>
-            <button class="btn" id="jumpLatestBtn" type="button" title="Zeig mir die frischesten Repos">
-              Latest Updates <span class="kbd">L</span>
-            </button>
-          </div>
-        </div>
-      </article>
+<section class="section">
+  <h2>Skill Matrix</h2>
+  <div class="matrix">
+    <div class="skill-card"><h3>.NET</h3><span>Architecture & Services</span></div>
+    <div class="skill-card"><h3>Blazor</h3><span>Modern Web UI</span></div>
+    <div class="skill-card"><h3>WPF</h3><span>Desktop Systems</span></div>
+    <div class="skill-card"><h3>SQL</h3><span>Data Modeling</span></div>
+    <div class="skill-card"><h3>CI/CD</h3><span>Automation Pipelines</span></div>
+    <div class="skill-card"><h3>Monitoring</h3><span>Observability</span></div>
+  </div>
+</section>
 
-      <aside class="side">
-        <div class="mini reveal" id="radarCard">
-          <div class="head">
-            <div>
-              <strong>Skill Radar</strong><br>
-              <span>animated • canvas</span>
-            </div>
-            <div class="kbd" title="Die Werte sind anpassbar">v1</div>
-          </div>
-          <div style="padding: 0 12px 12px;">
-            <canvas id="radar" width="520" height="280" style="width:100%; height: 240px; display:block;"></canvas>
-          </div>
-        </div>
-
-        <div class="mini reveal">
-          <div class="head">
-            <div>
-              <strong>Live Repo Stats</strong><br>
-              <span>github api</span>
-            </div>
-            <div class="kbd" id="apiStatus">loading</div>
-          </div>
-          <div class="statsRow">
-            <div class="stat">
-              <div class="n" id="statRepos">–</div>
-              <div class="l">Repos</div>
-            </div>
-            <div class="stat">
-              <div class="n" id="statStars">–</div>
-              <div class="l">Stars</div>
-            </div>
-            <div class="stat">
-              <div class="n" id="statUpdated">–</div>
-              <div class="l">Latest push</div>
-            </div>
-          </div>
-        </div>
-      </aside>
-    </section>
-
-    <section id="stack" class="section">
-      <div class="grid">
-        <article class="stackCard col-8 reveal">
-          <div class="stackInner">
-            <div class="stackHeader">
-              <div>
-                <h2 style="margin:0 0 2px">Skill Stack</h2>
-                <div class="muted" style="font-size:13px; margin-top:6px;">
-                  Orbit = deine Kerntechnologien. Radar = Skill-Verteilung. Beides bewusst subtil, weil wir hier kein Arcade-UI bauen.
-                </div>
-              </div>
-              <span>visual stack</span>
-            </div>
-
-            <div class="orbit" id="orbit">
-              <div class="orbitCenter">
-                CORE STACK
-                <small>.NET • UI • Data • Ops</small>
-              </div>
-
-              <!-- nodes are generated by JS -->
-            </div>
-
-            <div class="muted" style="font-family:var(--mono); font-size:12px; margin-top:10px;">
-              Tipp: Werte/Technologien unten im Script anpassen. Das Leben ist sonst zu einfach.
-            </div>
-          </div>
-        </article>
-
-        <article class="dash col-4 reveal">
-          <div class="dashTop">
-            <div>
-              <h2 style="margin:0 0 2px">Stack Highlights</h2>
-              <div class="muted" style="font-size:13px">Kurz, knackig, nicht cringe.</div>
-            </div>
-          </div>
-
-          <div style="padding: 14px 16px 16px; display:grid; gap:12px;">
-            <div class="stat">
-              <div class="n" style="font-size:16px;">.NET</div>
-              <div class="l">Services, APIs, Tooling</div>
-            </div>
-            <div class="stat">
-              <div class="n" style="font-size:16px;">UI</div>
-              <div class="l">Blazor, WPF, Design Systems</div>
-            </div>
-            <div class="stat">
-              <div class="n" style="font-size:16px;">Data</div>
-              <div class="l">SQL, EF Core, Reporting</div>
-            </div>
-            <div class="stat">
-              <div class="n" style="font-size:16px;">Ops</div>
-              <div class="l">CI/CD, Windows Services, Observability</div>
-            </div>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section id="projects" class="section">
-      <div class="grid">
-        <article class="dash col-12 reveal">
-          <div class="dashTop">
-            <div style="min-width:240px;">
-              <h2 style="margin:0 0 2px">Project Dashboard</h2>
-              <div class="muted" style="font-size:13px">Live aus GitHub geladen. Filterbar. Durchsuchbar. Anklickbar.</div>
-            </div>
-
-            <div class="tabs" role="tablist" aria-label="Project Tabs">
-              <div class="tab active" data-tab="highlights" role="tab">Highlights</div>
-              <div class="tab" data-tab="latest" role="tab">Latest</div>
-              <div class="tab" data-tab="all" role="tab">All</div>
-            </div>
-
-            <div class="controls">
-              <div class="search" title="Suche in Name, Beschreibung, Topics">
-                <span class="kbd">/</span>
-                <input id="searchInput" placeholder="Search repos…" autocomplete="off" />
-              </div>
-              <button class="btn" id="refreshBtn" type="button" title="Reload GitHub API">Refresh</button>
-            </div>
-          </div>
-
-          <div class="pillrow" id="langPills">
-            <!-- language pills generated by JS -->
-          </div>
-
-          <div class="repoGrid" id="repoGrid">
-            <!-- repos injected -->
-          </div>
-
-          <div class="muted" style="padding: 0 16px 16px; font-size:12px; font-family:var(--mono);">
-            Hinweis: GitHub API ist rate-limited. Wenn du die Seite 80x reloadest, ist das ein „du“-Problem.
-          </div>
-        </article>
-      </div>
-
-      <footer>
-        <div>© <span id="year"></span> Chaosnico9000</div>
-        <div>Apple x Stripe vibes, aber ohne das Preisschild.</div>
-      </footer>
-    </section>
-  </main>
-
-  <!-- Repo Modal -->
-  <div class="modal" id="repoModal" aria-hidden="true">
-    <div class="modalBox" role="dialog" aria-modal="true" aria-label="Repository details">
-      <div class="modalHead">
-        <div>
-          <div class="modalTitle"><span class="dot"></span><span id="mTitle">Repo</span></div>
-          <div class="muted" id="mSubtitle" style="font-size:12px; margin-top:6px; font-family:var(--mono);">…</div>
-        </div>
-        <div class="modalClose" id="mClose">ESC</div>
-      </div>
-
-      <div class="modalBody">
-        <div>
-          <div class="repoMeta" id="mBadges" style="justify-content:flex-start;"></div>
-          <p class="modalDesc" id="mDesc"></p>
-          <div class="modalActions">
-            <a class="btn accent" id="mOpen" target="_blank" rel="noreferrer">Open Repo ↗</a>
-            <a class="btn" id="mHomepage" target="_blank" rel="noreferrer" style="display:none;">Open Demo ↗</a>
-            <button class="btn" id="mCopy" type="button">Copy clone URL</button>
-          </div>
-        </div>
-
-        <div class="kv">
-          <div class="kvItem">
-            <b>Language</b>
-            <span id="mLang">–</span>
-          </div>
-          <div class="kvItem">
-            <b>Stars</b>
-            <span id="mStars">–</span>
-          </div>
-          <div class="kvItem">
-            <b>Last Push</b>
-            <span id="mPush">–</span>
-          </div>
-          <div class="kvItem">
-            <b>Topics</b>
-            <span id="mTopics">–</span>
-          </div>
-        </div>
-      </div>
-    </div>
+<section class="section">
+  <h2>Project Dashboard</h2>
+  <div class="dashboard-controls">
+    <button onclick="loadRepos()">Load Live GitHub Projects</button>
+    <button onclick="toggleView()">Switch View</button>
   </div>
 
-  <!-- GitHub Portal (Command Palette) -->
-  <div class="palette" id="palette" aria-hidden="true">
-    <div class="paletteBox" role="dialog" aria-modal="true" aria-label="GitHub portal">
-      <div class="paletteTop">
-        <span class="kbd">GitHub</span>
-        <input id="paletteInput" placeholder="Type to search repos… (Enter = open repo)" autocomplete="off" />
-        <span class="kbd">ESC</span>
+  <div class="grid" id="repos"></div>
+</section>
+
+<footer>
+© <span id="year"></span> Chaosnico9000
+</footer>
+
+</div>
+
+<div class="command-btn" onclick="window.open('https://github.com/Chaosnico9000','_blank')">
+  GH
+</div>
+
+<script>
+document.getElementById("year").textContent=new Date().getFullYear();
+
+/* Simple Particle Background */
+const canvas=document.getElementById('bg');
+const ctx=canvas.getContext('2d');
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+let particles=[];
+for(let i=0;i<120;i++){
+  particles.push({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    r:Math.random()*2,
+    dx:(Math.random()-0.5)*0.5,
+    dy:(Math.random()-0.5)*0.5
+  });
+}
+
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle="rgba(255,255,255,0.3)";
+  particles.forEach(p=>{
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fill();
+    p.x+=p.dx;
+    p.y+=p.dy;
+  });
+  requestAnimationFrame(animate);
+}
+animate();
+
+/* GitHub API */
+async function loadRepos(){
+  const res=await fetch("https://api.github.com/users/Chaosnico9000/repos?sort=pushed");
+  const data=await res.json();
+  const container=document.getElementById("repos");
+  container.innerHTML="";
+  data.slice(0,6).forEach(repo=>{
+    container.innerHTML+=`
+      <div class="repo">
+        <h3>${repo.name}</h3>
+        <p>${repo.description||"No description"}</p>
       </div>
-      <div class="paletteHint">Ein einziger Einstiegspunkt, kein Social-Icon-Zoo.</div>
-      <div class="paletteList" id="paletteList"></div>
-    </div>
-  </div>
+    `;
+  });
+}
+
+function toggleView(){
+  document.getElementById("repos").classList.toggle("list");
+}
+</script>
 
-  <!-- Three.js for WebGL background -->
-  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
-
-  <script>
-    // ====== CONFIG ======
-    const GITHUB_USER = "Chaosnico9000";
-
-    // Radar + Orbit stack (edit this to match reality)
-    const SKILLS = [
-      { name: ".NET / C#", value: 0.95 },
-      { name: "Blazor / UI", value: 0.90 },
-      { name: "SQL / Data", value: 0.86 },
-      { name: "WPF", value: 0.80 },
-      { name: "CI/CD", value: 0.78 },
-      { name: "Observability", value: 0.72 },
-    ];
-
-    const ORBIT_NODES = [
-      { label: "C#", bold: ".NET" },
-      { label: "Blazor", bold: "UI" },
-      { label: "WPF", bold: "Desktop" },
-      { label: "EF Core", bold: "Data" },
-      { label: "SQL Server", bold: "DB" },
-      { label: "Serilog", bold: "Logs" },
-      { label: "GitHub Actions", bold: "CI" },
-      { label: "Windows Services", bold: "Ops" },
-    ];
-
-    // ====== UTIL ======
-    const $ = (s, el=document) => el.querySelector(s);
-    const $$ = (s, el=document) => Array.from(el.querySelectorAll(s));
-    const fmtDate = (iso) => {
-      try{
-        const d = new Date(iso);
-        return d.toLocaleDateString(undefined, { year:"numeric", month:"short", day:"2-digit" });
-      }catch{ return "–"; }
-    };
-    const daysAgo = (iso) => {
-      const d = new Date(iso);
-      const diff = (Date.now() - d.getTime()) / (1000*60*60*24);
-      if(!isFinite(diff)) return "–";
-      if(diff < 1) return "today";
-      if(diff < 2) return "1d";
-      if(diff < 7) return Math.floor(diff) + "d";
-      if(diff < 30) return Math.floor(diff/7) + "w";
-      return Math.floor(diff/30) + "mo";
-    };
-
-    // ====== REVEAL ON SCROLL ======
-    const revealObserver = new IntersectionObserver((entries)=>{
-      for(const e of entries){
-        if(e.isIntersecting) e.target.classList.add("in");
-      }
-    }, { threshold: 0.12 });
-    $$(".reveal").forEach(el => revealObserver.observe(el));
-
-    // ====== ORBIT BUILD ======
-    (function buildOrbit(){
-      const orbit = $("#orbit");
-      ORBIT_NODES.forEach((n, i)=>{
-        const div = document.createElement("div");
-        div.className = "node";
-        div.style.animationDelay = (-i*1.6) + "s";
-        div.innerHTML = `<strong>${n.bold}</strong>${n.label}`;
-        orbit.appendChild(div);
-      });
-    })();
-
-    // ====== RADAR CHART (Canvas) ======
-    function drawRadar(canvas, skills, t){
-      const ctx = canvas.getContext("2d");
-      const w = canvas.width, h = canvas.height;
-      ctx.clearRect(0,0,w,h);
-
-      // sizing
-      const cx = w * 0.38;        // leave room for labels
-      const cy = h * 0.52;
-      const R  = Math.min(w,h) * 0.34;
-
-      // background
-      ctx.save();
-      ctx.globalAlpha = 0.92;
-      const grd = ctx.createRadialGradient(cx,cy,0,cx,cy,R*1.35);
-      grd.addColorStop(0, "rgba(79,156,255,0.20)");
-      grd.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.fillStyle = grd;
-      ctx.beginPath();
-      ctx.arc(cx,cy,R*1.35,0,Math.PI*2);
-      ctx.fill();
-      ctx.restore();
-
-      const N = skills.length;
-      const angle0 = -Math.PI/2;
-
-      // grid rings
-      ctx.lineWidth = 1;
-      for(let ring=1; ring<=4; ring++){
-        const rr = (R*ring)/4;
-        ctx.strokeStyle = "rgba(255,255,255,0.10)";
-        ctx.beginPath();
-        for(let i=0;i<N;i++){
-          const a = angle0 + i*(Math.PI*2/N);
-          const x = cx + Math.cos(a)*rr;
-          const y = cy + Math.sin(a)*rr;
-          if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-        }
-        ctx.closePath();
-        ctx.stroke();
-      }
-
-      // axes
-      for(let i=0;i<N;i++){
-        const a = angle0 + i*(Math.PI*2/N);
-        ctx.strokeStyle = "rgba(255,255,255,0.10)";
-        ctx.beginPath();
-        ctx.moveTo(cx,cy);
-        ctx.lineTo(cx + Math.cos(a)*R, cy + Math.sin(a)*R);
-        ctx.stroke();
-      }
-
-      // data polygon
-      const eased = t*t*(3-2*t); // smoothstep
-      ctx.beginPath();
-      for(let i=0;i<N;i++){
-        const a = angle0 + i*(Math.PI*2/N);
-        const v = skills[i].value * eased;
-        const rr = R * v;
-        const x = cx + Math.cos(a)*rr;
-        const y = cy + Math.sin(a)*rr;
-        if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-      }
-      ctx.closePath();
-
-      // fill
-      const grad2 = ctx.createLinearGradient(cx-R, cy-R, cx+R, cy+R);
-      grad2.addColorStop(0, "rgba(79,156,255,0.34)");
-      grad2.addColorStop(1, "rgba(35,196,248,0.18)");
-      ctx.fillStyle = grad2;
-      ctx.fill();
-
-      // outline
-      ctx.strokeStyle = "rgba(79,156,255,0.55)";
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      // points
-      for(let i=0;i<N;i++){
-        const a = angle0 + i*(Math.PI*2/N);
-        const v = skills[i].value * eased;
-        const rr = R * v;
-        const x = cx + Math.cos(a)*rr;
-        const y = cy + Math.sin(a)*rr;
-        ctx.fillStyle = "rgba(255,255,255,0.85)";
-        ctx.beginPath();
-        ctx.arc(x,y,3,0,Math.PI*2);
-        ctx.fill();
-      }
-
-      // labels (right side list)
-      ctx.font = "12px " + getComputedStyle(document.body).fontFamily;
-      ctx.fillStyle = "rgba(255,255,255,0.78)";
-      const lx = w * 0.70;
-      let ly = h * 0.26;
-      skills.forEach(s=>{
-        ctx.fillStyle = "rgba(255,255,255,0.78)";
-        ctx.fillText(s.name, lx, ly);
-        // tiny bar
-        const bw = 150, bh = 6;
-        ctx.fillStyle = "rgba(255,255,255,0.10)";
-        ctx.fillRect(lx, ly+8, bw, bh);
-        const fw = bw * (s.value * eased);
-        const g = ctx.createLinearGradient(lx, ly, lx+bw, ly);
-        g.addColorStop(0, "rgba(79,156,255,0.85)");
-        g.addColorStop(1, "rgba(35,196,248,0.60)");
-        ctx.fillStyle = g;
-        ctx.fillRect(lx, ly+8, fw, bh);
-        ly += 34;
-      });
-    }
-
-    (function animateRadar(){
-      const canvas = $("#radar");
-      let start = null;
-      function frame(ts){
-        if(!start) start = ts;
-        const t = Math.min(1, (ts-start)/1100);
-        drawRadar(canvas, SKILLS, t);
-        if(t < 1) requestAnimationFrame(frame);
-      }
-      requestAnimationFrame(frame);
-    })();
-
-    // ====== WEBGL BACKGROUND (Three.js) ======
-    (function init3D(){
-      const holder = document.getElementById("bg3d");
-      const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true, powerPreference:"high-performance" });
-      renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-      holder.appendChild(renderer.domElement);
-
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 1000);
-      camera.position.set(0, 0, 12);
-
-      // lights (subtle)
-      const light1 = new THREE.PointLight(0x4f9cff, 1.2, 60);
-      light1.position.set(-8, 6, 10);
-      scene.add(light1);
-
-      const light2 = new THREE.PointLight(0x23c4f8, 0.9, 60);
-      light2.position.set(9, -4, 10);
-      scene.add(light2);
-
-      const amb = new THREE.AmbientLight(0xffffff, 0.20);
-      scene.add(amb);
-
-      // geometry: torus knot wireframe + particle field
-      const knotGeo = new THREE.TorusKnotGeometry(3.0, 0.9, 180, 16);
-      const knotMat = new THREE.MeshStandardMaterial({
-        color: 0x8fb8ff,
-        metalness: 0.22,
-        roughness: 0.55,
-        emissive: new THREE.Color(0x0b1020),
-        transparent:true,
-        opacity: 0.55,
-      });
-      const knot = new THREE.Mesh(knotGeo, knotMat);
-      knot.position.set(0.8, 0.2, -3);
-      scene.add(knot);
-
-      const wire = new THREE.LineSegments(
-        new THREE.WireframeGeometry(knotGeo),
-        new THREE.LineBasicMaterial({ color: 0x4f9cff, transparent:true, opacity: 0.20 })
-      );
-      wire.position.copy(knot.position);
-      scene.add(wire);
-
-      // particles
-      const pCount = 1200;
-      const pos = new Float32Array(pCount*3);
-      for(let i=0;i<pCount;i++){
-        pos[i*3+0] = (Math.random()-0.5)*70;
-        pos[i*3+1] = (Math.random()-0.5)*40;
-        pos[i*3+2] = (Math.random()-0.5)*60 - 10;
-      }
-      const pGeo = new THREE.BufferGeometry();
-      pGeo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-      const pMat = new THREE.PointsMaterial({
-        color: 0xffffff,
-        size: 0.06,
-        transparent:true,
-        opacity: 0.33,
-        depthWrite:false,
-      });
-      const points = new THREE.Points(pGeo, pMat);
-      scene.add(points);
-
-      // resize
-      function resize(){
-        const w = window.innerWidth;
-        const h = window.innerHeight;
-        renderer.setSize(w, h, false);
-        camera.aspect = w/h;
-        camera.updateProjectionMatrix();
-      }
-      window.addEventListener("resize", resize, { passive:true });
-      resize();
-
-      // parallax
-      let mx=0, my=0;
-      window.addEventListener("mousemove", (e)=>{
-        mx = (e.clientX / window.innerWidth) * 2 - 1;
-        my = (e.clientY / window.innerHeight) * 2 - 1;
-      }, { passive:true });
-
-      // animation loop
-      let t = 0;
-      function tick(){
-        t += 0.005;
-
-        // subtle motion
-        knot.rotation.x += 0.003;
-        knot.rotation.y += 0.004;
-        wire.rotation.copy(knot.rotation);
-
-        points.rotation.y += 0.0008;
-        points.rotation.x += 0.0004;
-
-        // parallax camera
-        camera.position.x = mx * 0.9;
-        camera.position.y = -my * 0.55;
-
-        // gentle breathing
-        knot.position.y = 0.2 + Math.sin(t*2)*0.18;
-
-        renderer.render(scene, camera);
-        requestAnimationFrame(tick);
-      }
-      tick();
-    })();
-
-    // ====== GitHub API Live ======
-    let allRepos = [];
-    let activeTab = "highlights";
-    let activeLang = "All";
-    let searchTerm = "";
-
-    const apiStatus = $("#apiStatus");
-    const statRepos = $("#statRepos");
-    const statStars = $("#statStars");
-    const statUpdated = $("#statUpdated");
-
-    async function fetchRepos(){
-      apiStatus.textContent = "loading";
-      apiStatus.style.opacity = "1";
-
-      const url = `https://api.github.com/users/${GITHUB_USER}/repos?per_page=100&sort=pushed`;
-      const res = await fetch(url, { headers: { "Accept": "application/vnd.github+json" } });
-
-      // rate limit / errors
-      if(!res.ok){
-        apiStatus.textContent = "rate-limited";
-        // fallback: show empty but keep UI alive
-        allRepos = [];
-        renderAll();
-        return;
-      }
-
-      const data = await res.json();
-
-      // normalize + filter (no forks, no archived by default)
-      allRepos = data
-        .filter(r => !r.fork && !r.archived)
-        .map(r => ({
-          id: r.id,
-          name: r.name,
-          full_name: r.full_name,
-          html_url: r.html_url,
-          clone_url: r.clone_url,
-          homepage: r.homepage,
-          description: r.description || "",
-          language: r.language || "Unknown",
-          topics: r.topics || [],
-          stargazers_count: r.stargazers_count || 0,
-          watchers_count: r.watchers_count || 0,
-          forks_count: r.forks_count || 0,
-          open_issues_count: r.open_issues_count || 0,
-          pushed_at: r.pushed_at,
-          updated_at: r.updated_at,
-          created_at: r.created_at,
-          size: r.size || 0,
-        }));
-
-      apiStatus.textContent = "live";
-      // Stats
-      statRepos.textContent = String(allRepos.length);
-      statStars.textContent = String(allRepos.reduce((a,b)=>a + (b.stargazers_count||0), 0));
-      const latest = allRepos.slice().sort((a,b)=>new Date(b.pushed_at)-new Date(a.pushed_at))[0];
-      statUpdated.textContent = latest ? daysAgo(latest.pushed_at) : "–";
-
-      renderAll();
-    }
-
-    function buildLanguagePills(repos){
-      const el = $("#langPills");
-      el.innerHTML = "";
-
-      const counts = new Map();
-      repos.forEach(r => counts.set(r.language, (counts.get(r.language)||0)+1));
-
-      // sort by count desc
-      const langs = Array.from(counts.entries())
-        .sort((a,b)=>b[1]-a[1])
-        .map(([lang,count]) => ({ lang, count }));
-
-      // Always show "All" + top 8 languages
-      const items = [{ lang:"All", count: repos.length }, ...langs.slice(0, 8)];
-
-      items.forEach(item=>{
-        const pill = document.createElement("div");
-        pill.className = "pill" + (item.lang === activeLang ? " active" : "");
-        pill.textContent = `${item.lang} (${item.count})`;
-        pill.dataset.lang = item.lang;
-        pill.addEventListener("click", ()=>{
-          activeLang = pill.dataset.lang;
-          $$(".pill", el).forEach(p=>p.classList.toggle("active", p.dataset.lang === activeLang));
-          renderRepos();
-        });
-        el.appendChild(pill);
-      });
-    }
-
-    function getTabSet(repos){
-      const sortedByPushed = repos.slice().sort((a,b)=>new Date(b.pushed_at)-new Date(a.pushed_at));
-      const sortedByStars = repos.slice().sort((a,b)=> (b.stargazers_count - a.stargazers_count) || (new Date(b.pushed_at)-new Date(a.pushed_at)));
-
-      // "Highlights": top by stars, but if all zero, pick latest
-      const highlights = (sortedByStars[0]?.stargazers_count > 0 ? sortedByStars : sortedByPushed).slice(0, 8);
-      const latest = sortedByPushed.slice(0, 12);
-      const all = sortedByPushed;
-
-      return { highlights, latest, all };
-    }
-
-    function applyFilters(repos){
-      const langFiltered = (activeLang === "All") ? repos : repos.filter(r => r.language === activeLang);
-      const term = searchTerm.trim().toLowerCase();
-      if(!term) return langFiltered;
-
-      return langFiltered.filter(r => {
-        const hay = [
-          r.name,
-          r.description,
-          r.language,
-          (r.topics||[]).join(" ")
-        ].join(" ").toLowerCase();
-        return hay.includes(term);
-      });
-    }
-
-    function repoBadgeForRepo(r){
-      const badges = [];
-      if(r.language && r.language !== "Unknown") badges.push({ text: r.language, kind:"" });
-      if(r.stargazers_count > 0) badges.push({ text: `★ ${r.stargazers_count}`, kind:"ok" });
-      if(r.forks_count > 0) badges.push({ text: `⑂ ${r.forks_count}`, kind:"" });
-      badges.push({ text: `push ${daysAgo(r.pushed_at)}`, kind:"warn" });
-      return badges;
-    }
-
-    function renderRepos(){
-      const grid = $("#repoGrid");
-      grid.innerHTML = "";
-
-      const tabset = getTabSet(allRepos);
-      const base = tabset[activeTab] || tabset.highlights;
-      const filtered = applyFilters(base);
-
-      if(filtered.length === 0){
-        const div = document.createElement("div");
-        div.className = "repo";
-        div.style.cursor = "default";
-        div.innerHTML = `
-          <div class="repoTop">
-            <div class="repoTitle"><span class="dot"></span><span>Keine Treffer</span></div>
-            <div class="repoMeta"><span class="badge">try less chaos</span></div>
-          </div>
-          <p class="repoDesc">Suchbegriff oder Filter passt gerade nicht. Das ist okay. Passiert den Besten. Und dir.</p>
-          <div class="repoBottom"><span>—</span><span>—</span></div>
-        `;
-        grid.appendChild(div);
-        return;
-      }
-
-      filtered.forEach(r=>{
-        const card = document.createElement("div");
-        card.className = "repo";
-        card.addEventListener("mousemove", (e)=>{
-          const rect = card.getBoundingClientRect();
-          const x = ((e.clientX - rect.left)/rect.width)*100;
-          const y = ((e.clientY - rect.top)/rect.height)*100;
-          card.style.setProperty("--mx", x+"%");
-          card.style.setProperty("--my", y+"%");
-        });
-        card.addEventListener("click", ()=> openRepoModal(r));
-
-        const badges = repoBadgeForRepo(r).map(b => `<span class="badge ${b.kind||""}">${b.text}</span>`).join("");
-        const desc = (r.description || "").trim() || "No description. Ein Repo ohne Beschreibung ist wie Logging ohne Level: möglich, aber suspekt.";
-        card.innerHTML = `
-          <div class="repoTop">
-            <div>
-              <div class="repoTitle"><span class="dot"></span><span>${escapeHtml(r.name)}</span></div>
-              <p class="repoDesc">${escapeHtml(desc)}</p>
-            </div>
-            <div class="repoMeta">${badges}</div>
-          </div>
-          <div class="repoBottom">
-            <span>${escapeHtml((r.topics||[]).slice(0,3).join(" · ") || "topics: –")}</span>
-            <span>${fmtDate(r.pushed_at)}</span>
-          </div>
-        `;
-        grid.appendChild(card);
-      });
-
-      // build command palette list as well
-      rebuildPaletteList(allRepos);
-    }
-
-    function renderAll(){
-      buildLanguagePills(allRepos);
-      renderRepos();
-    }
-
-    function escapeHtml(s){
-      return String(s).replace(/[&<>"']/g, m => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
-      }[m]));
-    }
-
-    // ====== Tabs / Search / Refresh ======
-    $$(".tab").forEach(t=>{
-      t.addEventListener("click", ()=>{
-        activeTab = t.dataset.tab;
-        $$(".tab").forEach(x=>x.classList.toggle("active", x.dataset.tab === activeTab));
-        renderRepos();
-      });
-    });
-
-    $("#searchInput").addEventListener("input", (e)=>{
-      searchTerm = e.target.value || "";
-      renderRepos();
-    });
-
-    $("#refreshBtn").addEventListener("click", ()=>{
-      fetchRepos().catch(()=>{ apiStatus.textContent="error"; });
-    });
-
-    // Quick jump latest
-    $("#jumpLatestBtn").addEventListener("click", ()=>{
-      activeTab = "latest";
-      $$(".tab").forEach(x=>x.classList.toggle("active", x.dataset.tab === activeTab));
-      document.getElementById("projects").scrollIntoView({ behavior:"smooth", block:"start" });
-      renderRepos();
-    });
-
-    // Keyboard shortcuts: "/" focus search, Ctrl+K palette, ESC close modal/palette, "L" latest
-    window.addEventListener("keydown", (e)=>{
-      if(e.key === "/" && !e.ctrlKey && !e.metaKey && !e.altKey){
-        e.preventDefault();
-        $("#searchInput").focus();
-      }
-      if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k"){
-        e.preventDefault();
-        openPalette();
-      }
-      if(e.key === "Escape"){
-        closeRepoModal();
-        closePalette();
-      }
-      if(e.key.toLowerCase() === "l" && !e.ctrlKey && !e.metaKey && !e.altKey){
-        // jump latest
-        $("#jumpLatestBtn").click();
-      }
-    });
-
-    // ====== Repo Modal ======
-    const modal = $("#repoModal");
-    const mTitle = $("#mTitle");
-    const mSubtitle = $("#mSubtitle");
-    const mDesc = $("#mDesc");
-    const mBadges = $("#mBadges");
-    const mOpen = $("#mOpen");
-    const mHomepage = $("#mHomepage");
-    const mCopy = $("#mCopy");
-    const mLang = $("#mLang");
-    const mStars = $("#mStars");
-    const mPush = $("#mPush");
-    const mTopics = $("#mTopics");
-
-    $("#mClose").addEventListener("click", closeRepoModal);
-    modal.addEventListener("click", (e)=>{ if(e.target === modal) closeRepoModal(); });
-
-    function openRepoModal(r){
-      mTitle.textContent = r.name;
-      mSubtitle.textContent = r.full_name;
-      mDesc.textContent = r.description || "No description. Macht dich nicht weniger cool, aber es hilft Menschen beim Verstehen.";
-      mBadges.innerHTML = repoBadgeForRepo(r).map(b => `<span class="badge ${b.kind||""}">${b.text}</span>`).join("");
-      mOpen.href = r.html_url;
-
-      if(r.homepage && String(r.homepage).trim()){
-        mHomepage.href = r.homepage;
-        mHomepage.style.display = "inline-flex";
-      } else {
-        mHomepage.style.display = "none";
-      }
-
-      mLang.textContent = r.language || "Unknown";
-      mStars.textContent = String(r.stargazers_count || 0);
-      mPush.textContent = `${fmtDate(r.pushed_at)} (${daysAgo(r.pushed_at)})`;
-      mTopics.textContent = (r.topics && r.topics.length) ? r.topics.join(", ") : "–";
-
-      mCopy.onclick = async ()=>{
-        try{
-          await navigator.clipboard.writeText(r.clone_url);
-          toast("Clone URL copied.");
-        }catch{
-          toast("Clipboard blocked. Copy it manually like it's 2009.");
-        }
-      };
-
-      modal.classList.add("active");
-      modal.setAttribute("aria-hidden", "false");
-    }
-
-    function closeRepoModal(){
-      modal.classList.remove("active");
-      modal.setAttribute("aria-hidden", "true");
-    }
-
-    // ====== GitHub Portal (Command Palette) ======
-    const palette = $("#palette");
-    const paletteInput = $("#paletteInput");
-    const paletteList = $("#paletteList");
-    $("#openPaletteBtn").addEventListener("click", openPalette);
-    palette.addEventListener("click", (e)=>{ if(e.target === palette) closePalette(); });
-
-    function openPalette(){
-      palette.classList.add("active");
-      palette.setAttribute("aria-hidden", "false");
-      paletteInput.value = "";
-      rebuildPaletteList(allRepos);
-      setTimeout(()=>paletteInput.focus(), 50);
-    }
-    function closePalette(){
-      palette.classList.remove("active");
-      palette.setAttribute("aria-hidden", "true");
-    }
-
-    function rebuildPaletteList(repos){
-      // basic list: latest pushed
-      const list = repos.slice().sort((a,b)=>new Date(b.pushed_at)-new Date(a.pushed_at)).slice(0, 18);
-      renderPaletteItems(list);
-    }
-
-    function renderPaletteItems(list){
-      paletteList.innerHTML = "";
-      if(!list.length){
-        paletteList.innerHTML = `<div class="paletteHint" style="padding: 12px 16px;">No repos loaded.</div>`;
-        return;
-      }
-      list.forEach(r=>{
-        const item = document.createElement("div");
-        item.className = "cmd";
-        item.innerHTML = `
-          <div class="left">
-            <b>${escapeHtml(r.name)}</b>
-            <small>${escapeHtml(r.language || "Unknown")} • pushed ${daysAgo(r.pushed_at)} • ★ ${r.stargazers_count || 0}</small>
-          </div>
-          <div class="badge">open</div>
-        `;
-        item.addEventListener("click", ()=>{
-          window.open(r.html_url, "_blank", "noopener,noreferrer");
-        });
-        paletteList.appendChild(item);
-      });
-    }
-
-    paletteInput.addEventListener("input", ()=>{
-      const term = paletteInput.value.trim().toLowerCase();
-      const filtered = allRepos
-        .filter(r=>{
-          const hay = (r.name + " " + (r.description||"") + " " + (r.topics||[]).join(" ")).toLowerCase();
-          return hay.includes(term);
-        })
-        .sort((a,b)=>new Date(b.pushed_at)-new Date(a.pushed_at))
-        .slice(0, 18);
-      renderPaletteItems(filtered);
-    });
-
-    paletteInput.addEventListener("keydown", (e)=>{
-      if(e.key === "Enter"){
-        const first = paletteList.querySelector(".cmd");
-        if(first) first.click();
-      }
-    });
-
-    // ====== Toast ======
-    function toast(msg){
-      const t = document.createElement("div");
-      t.textContent = msg;
-      t.style.position = "fixed";
-      t.style.left = "50%";
-      t.style.bottom = "20px";
-      t.style.transform = "translateX(-50%)";
-      t.style.padding = "10px 14px";
-      t.style.borderRadius = "14px";
-      t.style.border = "1px solid rgba(255,255,255,.14)";
-      t.style.background = "rgba(0,0,0,.55)";
-      t.style.backdropFilter = "blur(10px)";
-      t.style.color = "rgba(255,255,255,.86)";
-      t.style.fontFamily = "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono','Courier New', monospace";
-      t.style.fontSize = "12px";
-      t.style.boxShadow = "0 18px 50px rgba(0,0,0,.55)";
-      t.style.zIndex = "9999";
-      document.body.appendChild(t);
-      setTimeout(()=>t.remove(), 2200);
-    }
-
-    // ====== Init ======
-    document.getElementById("year").textContent = new Date().getFullYear();
-
-    // fetch repos now
-    fetchRepos().catch(()=>{
-      apiStatus.textContent = "error";
-      allRepos = [];
-      renderAll();
-    });
-  </script>
 </body>
 </html>
