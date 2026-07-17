@@ -34,6 +34,25 @@
     <!-- Inline SVG favicon -->
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%236366f1'/%3E%3Ctext x='16' y='22' font-family='Arial,sans-serif' font-size='15' font-weight='700' fill='white' text-anchor='middle'%3ECN%3C/text%3E%3C/svg%3E" />
 
+    <!-- Structured data (SEO) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Nico Hinken",
+      "jobTitle": "Software Engineer",
+      "worksFor": { "@type": "Organization", "name": "LIST AG" },
+      "address": { "@type": "PostalAddress", "addressCountry": "DE" },
+      "url": "https://chaosnico9000.github.io/",
+      "email": "mailto:nicohinken@gmail.com",
+      "knowsAbout": [".NET", "C#", "TypeScript", "Python", "DevOps", "Monitoring", "Automation"],
+      "sameAs": [
+        "https://github.com/Chaosnico9000",
+        "https://de.linkedin.com/in/nico-hinken-58642732a"
+      ]
+    }
+    </script>
+
     <!-- Prevent theme flash: run before paint -->
     <script>
       (function () {
@@ -554,6 +573,64 @@
         .to-top:hover { background: var(--accent-hover); }
         .to-top svg { width: 20px; height: 20px; }
 
+        /* Scroll progress */
+        .scroll-progress {
+            position: fixed; top: 0; left: 0; height: 3px; width: 100%;
+            transform: scaleX(0); transform-origin: 0 50%;
+            background: linear-gradient(90deg, var(--accent), #ec4899);
+            z-index: 200; will-change: transform;
+        }
+
+        /* Active nav (scrollspy) */
+        .nav-link.active { color: var(--text); background: var(--bg-hover); }
+
+        /* Language breakdown */
+        .lang-breakdown { margin: 0 0 52px; }
+        .lb-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+        .lb-head h3 { font-size: 14px; font-weight: 700; }
+        .lb-head span { font-size: 12.5px; color: var(--text-light); }
+        .lb-bar { display: flex; height: 12px; border-radius: 999px; overflow: hidden; background: var(--bg-hover); box-shadow: inset 0 0 0 1px var(--line-light); }
+        .lb-seg { height: 100%; transition: opacity .2s ease; min-width: 2px; }
+        .lb-seg:hover { opacity: .78; }
+        .lb-legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 14px; }
+        .lb-item { display: flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--text-muted); }
+        .lb-item b { color: var(--text); font-weight: 600; }
+
+        /* Sort control */
+        .sort-control select {
+            appearance: none; -webkit-appearance: none;
+            padding: 9px 32px 9px 12px; border: 1px solid var(--line); border-radius: var(--radius);
+            background-color: var(--bg-subtle); color: var(--text);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='%236b6b76' stroke-width='2'%3E%3Cpath d='m3 5 4 4 4-4'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 11px center;
+            font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer;
+            transition: border-color .2s ease, box-shadow .2s ease;
+        }
+        .sort-control select:hover { border-color: var(--accent); }
+        .sort-control select:focus { outline: none; border-color: var(--accent); box-shadow: var(--ring); }
+
+        /* Contact */
+        .contact-card {
+            background: var(--bg-card); border: 1px solid var(--line);
+            border-radius: var(--radius-xl); padding: 52px 32px; text-align: center;
+            max-width: 720px; margin: 0 auto;
+            background-image: radial-gradient(60% 120% at 50% 0%, var(--accent-soft), transparent 70%);
+        }
+        .contact-card h2 { font-size: clamp(24px, 4vw, 32px); font-weight: 800; letter-spacing: -.6px; margin-bottom: 12px; }
+        .contact-card p { color: var(--text-muted); max-width: 460px; margin: 0 auto 28px; }
+        .contact-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+        /* Modal README preview */
+        .readme-box {
+            background: var(--bg-subtle); border: 1px solid var(--line-light);
+            border-radius: var(--radius); padding: 14px 16px; margin-bottom: 20px;
+            font-size: 13px; color: var(--text-muted); line-height: 1.6;
+            max-height: 168px; overflow: hidden; position: relative; white-space: pre-wrap; word-break: break-word;
+        }
+        .readme-box::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 40px; background: linear-gradient(transparent, var(--bg-subtle)); }
+        .readme-box.short::after { display: none; }
+        .readme-label { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; font-weight: 600; color: var(--text-light); margin-bottom: 8px; }
+
         @media (prefers-reduced-motion: reduce) {
             * { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
             .reveal { opacity: 1; transform: none; }
@@ -562,6 +639,7 @@
 </head>
 
 <body>
+    <div class="scroll-progress" id="scrollProgress"></div>
     <a href="#projects" class="skip-link">Skip to projects</a>
 
     <header>
@@ -576,6 +654,7 @@
                     <a href="#skills" class="nav-link nav-desktop">Skills</a>
                     <a href="#work" class="nav-link nav-desktop">Work</a>
                     <a href="#projects" class="nav-link nav-desktop">Projects</a>
+                    <a href="#contact" class="nav-link nav-desktop">Contact</a>
                     <button class="kbd-btn" id="openPaletteBtn" aria-label="Open command palette">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
                         Search
@@ -636,6 +715,7 @@
                     <div class="stat-label"><span class="status-dot" id="statusDot"></span><span id="apiStatus">connecting…</span></div>
                 </div>
             </div>
+            <div class="lang-breakdown" id="langBreakdown" hidden></div>
         </div>
 
         <section id="about">
@@ -774,6 +854,13 @@
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
                                 <input type="text" id="searchInput" placeholder="Search repositories…" autocomplete="off" aria-label="Search repositories" />
                             </div>
+                            <div class="sort-control">
+                                <select id="sortSelect" aria-label="Sort repositories">
+                                    <option value="recent">Recently pushed</option>
+                                    <option value="stars">Most stars</option>
+                                    <option value="name">Name (A–Z)</option>
+                                </select>
+                            </div>
                             <button class="btn btn-secondary" id="refreshBtn">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg>
                                 Refresh
@@ -782,6 +869,29 @@
                     </div>
                     <div class="filters" id="langPills"></div>
                     <div class="repo-grid" id="repoGrid"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact">
+            <div class="container">
+                <div class="contact-card reveal">
+                    <h2>Let's build something</h2>
+                    <p>Open to interesting projects, collaboration or just talking shop about .NET, TypeScript and tooling.</p>
+                    <div class="contact-actions">
+                        <a class="btn btn-primary" href="mailto:nicohinken@gmail.com">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
+                            Email me
+                        </a>
+                        <button class="btn btn-secondary" id="copyEmailBtn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            Copy email
+                        </button>
+                        <a class="btn btn-secondary" href="https://de.linkedin.com/in/nico-hinken-58642732a" target="_blank" rel="noopener">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13ZM7.12 20.45H3.56V9h3.56v11.45ZM22.22 0H1.77C.8 0 0 .78 0 1.75v20.5C0 23.22.8 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.75V1.75C24 .78 23.2 0 22.22 0Z"/></svg>
+                            LinkedIn
+                        </a>
+                    </div>
                 </div>
             </div>
         </section>
@@ -819,6 +929,10 @@
             <div class="modal-body">
                 <div id="mBadges" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px"></div>
                 <p class="modal-description" id="mDesc"></p>
+                <div id="mReadmeWrap" style="display:none">
+                    <div class="readme-label">Readme preview</div>
+                    <div class="readme-box" id="mReadme"></div>
+                </div>
                 <div class="modal-meta">
                     <div class="meta-item"><div class="meta-label">Language</div><div class="meta-value" id="mLang">–</div></div>
                     <div class="meta-item"><div class="meta-label">Stars</div><div class="meta-value" id="mStars">–</div></div>
@@ -893,6 +1007,32 @@
     // ====== UTIL ======
     const $  = (s, el = document) => el.querySelector(s);
     const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
+    const prefersReducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    function animateCount(el, target) {
+      if (prefersReducedMotion) { el.textContent = String(target); return; }
+      const start = performance.now(), dur = 900;
+      (function step(now) {
+        const p = Math.min(1, (now - start) / dur);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = String(Math.round(target * eased));
+        if (p < 1) requestAnimationFrame(step);
+      })(start);
+    }
+
+    function cleanMarkdown(md) {
+      return md
+        .replace(/```[\s\S]*?```/g, "")
+        .replace(/<!--[\s\S]*?-->/g, "")
+        .replace(/<[^>]+>/g, "")
+        .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+        .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
+        .replace(/^\s*[-*]\s+/gm, "• ")
+        .replace(/^#{1,6}\s+/gm, "")
+        .replace(/[*_`>#|]/g, "")
+        .replace(/\n{3,}/g, "\n\n")
+        .trim();
+    }
 
     const fmtDate = (iso) => {
       const d = new Date(iso);
@@ -977,6 +1117,7 @@
     let activeTab = "highlights";
     let activeLang = "All";
     let searchTerm = "";
+    let sortBy = "recent";
 
     const apiStatus = $("#apiStatus");
     const statusDot = $("#statusDot");
@@ -1028,8 +1169,8 @@
 
     function hydrate(repos, live) {
       allRepos = repos;
-      statRepos.textContent = String(repos.length);
-      statStars.textContent = String(repos.reduce((a, b) => a + b.stargazers_count, 0));
+      animateCount(statRepos, repos.length);
+      animateCount(statStars, repos.reduce((a, b) => a + b.stargazers_count, 0));
       const latest = repos.slice().sort((a, b) => new Date(b.pushed_at) - new Date(a.pushed_at))[0];
       statUpdated.textContent = latest ? daysAgo(latest.pushed_at) : "–";
       // top language
@@ -1038,7 +1179,24 @@
       const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
       statLang.textContent = top ? top[0] : "–";
       setStatus(live ? "live" : "cached", live ? "live" : "");
+      renderLangBreakdown(repos);
       renderAll();
+    }
+
+    function renderLangBreakdown(repos) {
+      const box = $("#langBreakdown");
+      const counts = new Map();
+      repos.forEach(r => { if (r.language && r.language !== "Unknown") counts.set(r.language, (counts.get(r.language) || 0) + 1); });
+      const total = Array.from(counts.values()).reduce((a, b) => a + b, 0);
+      if (!total) { box.hidden = true; return; }
+      const langs = Array.from(counts.entries()).sort((a, b) => b[1] - a[1]);
+      const segs = langs.map(([l, c]) => `<div class="lb-seg" style="width:${(c / total * 100).toFixed(1)}%;background:${langColor(l)}" title="${escapeHtml(l)}: ${c}"></div>`).join("");
+      const legend = langs.slice(0, 8).map(([l, c]) => `<span class="lb-item"><span class="lang-dot" style="background:${langColor(l)}"></span>${escapeHtml(l)} <b>${Math.round(c / total * 100)}%</b></span>`).join("");
+      box.innerHTML = `
+        <div class="lb-head"><h3>Language breakdown</h3><span>${langs.length} languages across ${total} repos</span></div>
+        <div class="lb-bar">${segs}</div>
+        <div class="lb-legend">${legend}</div>`;
+      box.hidden = false;
     }
 
     async function fetchRepos({ force = false } = {}) {
@@ -1126,9 +1284,17 @@
       );
     }
 
+    function applySort(list) {
+      const arr = list.slice();
+      if (sortBy === "stars") arr.sort((a, b) => (b.stargazers_count - a.stargazers_count) || (new Date(b.pushed_at) - new Date(a.pushed_at)));
+      else if (sortBy === "name") arr.sort((a, b) => a.name.localeCompare(b.name));
+      else arr.sort((a, b) => new Date(b.pushed_at) - new Date(a.pushed_at));
+      return arr;
+    }
+
     function renderRepos() {
       const base = getTabSet(allRepos)[activeTab] || [];
-      const filtered = applyFilters(base);
+      const filtered = applySort(applyFilters(base));
       repoGrid.innerHTML = "";
 
       if (!allRepos.length) {
@@ -1191,6 +1357,13 @@
 
     $("#refreshBtn").addEventListener("click", () => fetchRepos({ force: true }));
 
+    $("#sortSelect").addEventListener("change", (e) => { sortBy = e.target.value; renderRepos(); });
+
+    $("#copyEmailBtn").addEventListener("click", async () => {
+      try { await navigator.clipboard.writeText("nicohinken@gmail.com"); toast("Email copied"); }
+      catch { toast("nicohinken@gmail.com", false); }
+    });
+
     // ====== FOCUS TRAP ======
     function trapFocus(container, e) {
       const focusables = $$('a[href],button:not([disabled]),input,[tabindex]:not([tabindex="-1"])', container)
@@ -1236,9 +1409,34 @@
         catch { toast("Copy failed — " + r.clone_url, false); }
       };
 
+      loadReadme(r.full_name);
+
       modal.classList.add("active");
       document.body.style.overflow = "hidden";
       setTimeout(() => $("#mClose").focus(), 60);
+    }
+
+    const readmeCache = new Map();
+    async function loadReadme(fullName) {
+      const wrap = $("#mReadmeWrap"), box = $("#mReadme");
+      wrap.style.display = "none";
+      let text = readmeCache.get(fullName);
+      if (text === undefined) {
+        try {
+          const res = await fetch(`https://api.github.com/repos/${fullName}/readme`, { headers: { Accept: "application/vnd.github.raw+json" } });
+          if (!res.ok) throw new Error();
+          text = cleanMarkdown(await res.text());
+        } catch { text = ""; }
+        readmeCache.set(fullName, text);
+      }
+      // Guard: user may have opened a different repo while awaiting
+      if ($("#mSubtitle").textContent !== fullName || !modal.classList.contains("active")) return;
+      if (text) {
+        const shown = text.slice(0, 600);
+        box.textContent = shown;
+        box.classList.toggle("short", text.length <= 600);
+        wrap.style.display = "block";
+      }
     }
 
     function closeRepoModal() {
@@ -1346,13 +1544,35 @@
     }
 
     const toTop = $("#toTop");
+    const scrollProgress = $("#scrollProgress");
     toTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
     let ticking = false;
     window.addEventListener("scroll", () => {
       if (ticking) return;
       ticking = true;
-      requestAnimationFrame(() => { toTop.classList.toggle("show", window.scrollY > 600); ticking = false; });
+      requestAnimationFrame(() => {
+        toTop.classList.toggle("show", window.scrollY > 600);
+        const h = document.documentElement.scrollHeight - window.innerHeight;
+        scrollProgress.style.transform = `scaleX(${h > 0 ? window.scrollY / h : 0})`;
+        ticking = false;
+      });
     }, { passive: true });
+
+    // Scrollspy — highlight active nav link
+    const navMap = new Map();
+    $$(".nav-link[href^='#']").forEach(a => { const id = a.getAttribute("href").slice(1); if (id) navMap.set(id, a); });
+    if ("IntersectionObserver" in window && navMap.size) {
+      const spy = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            navMap.forEach(a => a.classList.remove("active"));
+            const link = navMap.get(e.target.id);
+            if (link) link.classList.add("active");
+          }
+        });
+      }, { rootMargin: "-45% 0px -50% 0px" });
+      ["about", "skills", "work", "projects", "contact"].forEach(id => { const el = document.getElementById(id); if (el) spy.observe(el); });
+    }
 
     // ====== INIT ======
     $("#year").textContent = new Date().getFullYear();
