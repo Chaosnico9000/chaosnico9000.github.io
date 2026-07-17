@@ -360,6 +360,28 @@
         }
         .skill-desc { font-size: 13px; color: var(--text-muted); line-height: 1.55; }
 
+        /* Selected Work */
+        .work-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 18px; }
+        .work-card {
+            background: var(--bg-card); border: 1px solid var(--line);
+            border-radius: var(--radius-lg); padding: 22px;
+            display: flex; flex-direction: column;
+            transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+        }
+        .work-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+        .work-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+        .work-title { font-size: 17px; font-weight: 700; letter-spacing: -.3px; }
+        .badge-lock { background: var(--bg-hover); color: var(--text-muted); }
+        .badge-lock svg { width: 11px; height: 11px; }
+        .work-desc { font-size: 14px; color: var(--text-muted); line-height: 1.55; margin-bottom: 16px; flex-grow: 1; }
+        .work-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+        .tag { font-family: var(--mono); font-size: 11.5px; padding: 3px 8px; border-radius: 6px; background: var(--bg-subtle); border: 1px solid var(--line-light); color: var(--text-muted); }
+        .work-links { display: flex; flex-wrap: wrap; gap: 14px; padding-top: 12px; border-top: 1px solid var(--line-light); }
+        .work-link { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 600; color: var(--accent); text-decoration: none; }
+        .work-link:hover { text-decoration: underline; }
+        .work-link.muted { color: var(--text-light); font-weight: 500; }
+        .work-link svg { width: 13px; height: 13px; }
+
         /* Dashboard */
         .dashboard { background: var(--bg-card); border: 1px solid var(--line); border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-sm); }
         .dashboard-header { padding: 20px 22px; border-bottom: 1px solid var(--line); }
@@ -552,6 +574,7 @@
                 <div class="nav-links">
                     <a href="#about" class="nav-link nav-desktop">About</a>
                     <a href="#skills" class="nav-link nav-desktop">Skills</a>
+                    <a href="#work" class="nav-link nav-desktop">Work</a>
                     <a href="#projects" class="nav-link nav-desktop">Projects</a>
                     <button class="kbd-btn" id="openPaletteBtn" aria-label="Open command palette">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
@@ -652,10 +675,90 @@
             </div>
         </section>
 
+        <section id="work">
+            <div class="container">
+                <div class="section-header reveal">
+                    <h2 class="section-title">Selected Work</h2>
+                    <p class="section-subtitle">A few projects I'm proud of — including private work not shown in the live feed below.</p>
+                </div>
+
+                <div class="work-grid reveal">
+                    <article class="work-card">
+                        <div class="work-head">
+                            <h3 class="work-title">MainFrameHub</h3>
+                            <span class="badge badge-lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> Private</span>
+                        </div>
+                        <p class="work-desc">A modular multi-game community platform for tactical gaming groups. A fully containerized Bun-workspace monorepo: Next.js 15 web app, Hono API, Drizzle ORM and a Discord bot, with a public members intranet.</p>
+                        <div class="work-tags"><span class="tag">Next.js 15</span><span class="tag">Hono</span><span class="tag">Bun</span><span class="tag">Drizzle ORM</span><span class="tag">Docker</span><span class="tag">Discord.js</span></div>
+                    </article>
+
+                    <article class="work-card">
+                        <div class="work-head">
+                            <h3 class="work-title">MainFrame Design System</h3>
+                            <span class="badge badge-lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> Private</span>
+                        </div>
+                        <p class="work-desc">A reusable React component library built on Base UI, CVA and Tailwind v4 with OKLCh design tokens and light/dark theming — published to GitHub Packages with interactive, live-preview documentation.</p>
+                        <div class="work-tags"><span class="tag">React 19</span><span class="tag">TypeScript</span><span class="tag">Tailwind v4</span><span class="tag">Base UI</span><span class="tag">OKLCh</span></div>
+                        <div class="work-links">
+                            <a class="work-link" href="https://chaosnico9000.github.io/MainFrameHub-DesignSystem/" target="_blank" rel="noopener">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M8 7h9v9"/></svg> Live docs
+                            </a>
+                        </div>
+                    </article>
+
+                    <article class="work-card">
+                        <div class="work-head">
+                            <h3 class="work-title">FRAME</h3>
+                            <span class="badge badge-lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> Private</span>
+                        </div>
+                        <p class="work-desc">A large language model series built from scratch (Spin · Ferrite · Dynamo): custom tokenizers, training pipeline and chat interface — scaling from a CPU-friendly ~7M model up to larger GPU models.</p>
+                        <div class="work-tags"><span class="tag">Python</span><span class="tag">LLM</span><span class="tag">Tokenizers</span><span class="tag">Training</span></div>
+                    </article>
+
+                    <article class="work-card">
+                        <div class="work-head">
+                            <h3 class="work-title">VERA</h3>
+                            <span class="badge badge-success">Public</span>
+                        </div>
+                        <p class="work-desc">A cross-platform time-tracking app (Android / iOS / macOS) built with .NET MAUI, backed by an ASP.NET Core 10 server — gamification (levels, XP, achievements), biometric auth and JWT refresh rotation.</p>
+                        <div class="work-tags"><span class="tag">.NET MAUI</span><span class="tag">ASP.NET Core 10</span><span class="tag">SQLite</span><span class="tag">JWT</span></div>
+                        <div class="work-links">
+                            <a class="work-link" href="https://github.com/Chaosnico9000/VERA" target="_blank" rel="noopener">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M8 7h9v9"/></svg> View on GitHub
+                            </a>
+                        </div>
+                    </article>
+
+                    <article class="work-card">
+                        <div class="work-head">
+                            <h3 class="work-title">ChaosCLI</h3>
+                            <span class="badge badge-success">Public</span>
+                        </div>
+                        <p class="work-desc">A lightweight, cross-platform chaos-engineering CLI for testing system resilience — simulate timeouts, CPU load, memory pressure, I/O stress and custom exit codes to validate how applications handle failure.</p>
+                        <div class="work-tags"><span class="tag">C#</span><span class="tag">.NET</span><span class="tag">Chaos Engineering</span></div>
+                        <div class="work-links">
+                            <a class="work-link" href="https://github.com/Chaosnico9000/ChaosCLI" target="_blank" rel="noopener">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M8 7h9v9"/></svg> View on GitHub
+                            </a>
+                        </div>
+                    </article>
+
+                    <article class="work-card">
+                        <div class="work-head">
+                            <h3 class="work-title">Quick</h3>
+                            <span class="badge badge-lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> Private</span>
+                        </div>
+                        <p class="work-desc">A local clone of Shopify Quick: drop a folder and get an instantly hosted URL. Supports static sites and auto-built React apps through a small control-plane server and CLI.</p>
+                        <div class="work-tags"><span class="tag">Bun</span><span class="tag">TypeScript</span><span class="tag">React</span></div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
         <section id="projects">
             <div class="container">
                 <div class="section-header reveal">
-                    <h2 class="section-title">Featured Projects</h2>
+                    <h2 class="section-title">All Public Repositories</h2>
                     <p class="section-subtitle">Live from GitHub — search, filter, and explore.</p>
                 </div>
 
